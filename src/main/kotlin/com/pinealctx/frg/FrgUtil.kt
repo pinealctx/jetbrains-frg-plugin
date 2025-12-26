@@ -70,10 +70,4 @@ object FrgUtil {
         }
         return result
     }
-
-    fun findGoFiles(project: Project): Collection<VirtualFile> {
-        // Simple search for all files ending with .go
-        // In a real plugin, you might want to use GoFileType if the Go plugin is available
-        return com.intellij.psi.search.FilenameIndex.getAllFilesByExt(project, "go", GlobalSearchScope.allScope(project))
-    }
 }

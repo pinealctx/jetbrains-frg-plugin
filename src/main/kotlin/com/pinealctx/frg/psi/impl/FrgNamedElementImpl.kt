@@ -10,6 +10,11 @@ abstract class FrgNamedElementImpl(node: ASTNode) : ASTWrapperPsiElement(node), 
     override fun getName(): String? = nameIdentifier?.text
 
     override fun setName(name: String): PsiElement {
+        val identifier = nameIdentifier
+        if (identifier != null) {
+            val newIdentifier = FrgElementFactory.createIdentifier(project, name)
+            identifier.replace(newIdentifier)
+        }
         return this
     }
 

@@ -36,7 +36,9 @@ normalField ::= identifier typeName (tag)? {pin=2}
 anonymousField ::= (pointerType | qualifiedName) (tag)?
 
 typeName ::= (mapType | arrayType | pointerType | qualifiedName | primitiveType)
-qualifiedName ::= ID (DOT ID)*
+qualifiedName ::= ID (DOT ID)* {
+    mixin="com.pinealctx.frg.psi.impl.FrgQualifiedNameMixin"
+}
 pointerType ::= STAR typeName
 mapType ::= MAP LBRACK primitiveType RBRACK typeName
 arrayType ::= LBRACK RBRACK typeName

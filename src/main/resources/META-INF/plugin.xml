@@ -9,7 +9,6 @@
     <ul>
         <li>Syntax highlighting</li>
         <li>Go to definition for Types and Enums</li>
-        <li>Go to definition for Handlers (jumps to Go implementation)</li>
         <li>Structure view</li>
     </ul>
     ]]></description>
@@ -39,13 +38,6 @@
         <lang.psiStructureViewFactory
             language="FRG"
             implementationClass="com.pinealctx.frg.FrgStructureViewFactory"/>
-            
-        <psi.referenceContributor
-            language="FRG"
-            implementation="com.pinealctx.frg.FrgReferenceContributor"/>
-            
-        <codeInsight.lineMarkerProvider
-            language="FRG"
-            implementationClass="com.pinealctx.frg.FrgLineMarkerProvider"/>
+
     </extensions>
 </idea-plugin>

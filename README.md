@@ -7,7 +7,6 @@ This is a JetBrains plugin for the FRG language, providing rich language support
 - **Syntax Highlighting**: Colorization for keywords, types, strings, comments, and more.
 - **Go to Definition**:
   - Jump to Type definitions (structs, enums).
-  - Jump to Handler implementations (Go functions).
   - Jump to `@externDefs` definitions.
 - **Structure View**: Outline view of the file structure (Services, Types, Enums).
 - **Line Markers**: Quick navigation icons for handlers.

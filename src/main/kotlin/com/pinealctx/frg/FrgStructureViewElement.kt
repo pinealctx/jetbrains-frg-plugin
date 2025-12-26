@@ -24,13 +24,35 @@ class FrgStructureViewElement(private val element: NavigatablePsiElement) : Stru
     override fun canNavigateToSource(): Boolean = element.canNavigateToSource()
 
     override fun getAlphaSortKey(): String {
-        val name = element.name
-        return name ?: ""
+        return getElementName() ?: ""
     }
 
     override fun getPresentation(): ItemPresentation {
-        val presentation = element.presentation
-        return presentation ?: PresentationData()
+        val name = getElementName()
+        return PresentationData(name, null, FrgFileType.icon, null)
+    }
+
+    private fun getElementName(): String? {
+        return when (element) {
+            is FrgFile -> element.name
+            is FrgServiceDecl -> {
+                val idNode = (element as PsiElement).node.findChildByType(FrgTypes.ID)
+                idNode?.text ?: "Service"
+            }
+            is FrgTypeDecl -> (element as FrgNamedElement).name
+            is FrgEnumDecl -> (element as FrgNamedElement).name
+            is FrgHandlerMetadata -> element.identifier.text
+            is FrgTypeField -> {
+                val normal = element.normalField
+                if (normal != null) {
+                    normal.identifier.text
+                } else {
+                    val anon = element.anonymousField
+                    anon?.text
+                }
+            }
+            else -> element.name
+        }
     }
 
     override fun getChildren(): Array<TreeElement> {
