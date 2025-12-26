@@ -1,0 +1,79 @@
+{
+  parserClass="com.pinealctx.frg.parser.FrgParser"
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Frg"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.pinealctx.frg.psi"
+  psiImplPackage="com.pinealctx.frg.psi.impl"
+
+  elementTypeHolderClass="com.pinealctx.frg.psi.FrgTypes"
+  elementTypeClass="com.pinealctx.frg.psi.FrgElementType"
+  tokenTypeClass="com.pinealctx.frg.psi.FrgTokenType"
+}
+
+frgFile ::= item_*
+
+private item_ ::= (syntaxDecl | infoBlock | importDecl | externDefs | typeDecl | enumDecl | serviceDecl | COMMENT)
+
+syntaxDecl ::= SYNTAX (ASSIGN)? STRING_LITERAL
+infoBlock ::= INFO LPAREN (keyValue)* RPAREN
+importDecl ::= IMPORT STRING_LITERAL
+
+externDefs ::= AT_EXTERN_DEFS LBRACE externDef* RBRACE
+externDef ::= keyValue+
+
+identifier ::= ID
+
+typeDecl ::= TYPE identifier (STRUCT)? LBRACE typeField* RBRACE {
+    mixin="com.pinealctx.frg.psi.impl.FrgNamedElementImpl"
+    implements="com.pinealctx.frg.psi.FrgNamedElement"
+    methods=[getName setName getNameIdentifier]
+}
+
+typeField ::= normalField | anonymousField
+normalField ::= identifier typeName (tag)? {pin=2}
+anonymousField ::= (pointerType | qualifiedName) (tag)?
+
+typeName ::= (mapType | arrayType | pointerType | qualifiedName | primitiveType)
+qualifiedName ::= ID (DOT ID)*
+pointerType ::= STAR typeName
+mapType ::= MAP LBRACK primitiveType RBRACK typeName
+arrayType ::= LBRACK RBRACK typeName
+primitiveType ::= STRING | BOOL | INT | INT32 | INT64 | FLOAT | FLOAT32 | FLOAT64 | DOUBLE | INTERFACE
+
+tag ::= STRING_LITERAL
+
+enumDecl ::= ENUM identifier LBRACE enumMember* RBRACE {
+    mixin="com.pinealctx.frg.psi.impl.FrgNamedElementImpl"
+    implements="com.pinealctx.frg.psi.FrgNamedElement"
+    methods=[getName setName getNameIdentifier]
+}
+
+enumMember ::= ID (ASSIGN value)? (SEMI)?
+
+serviceDecl ::= (attrBlock)? SERVICE ID? LBRACE serviceBody* RBRACE
+serviceBody ::= handlerMetadata | docMetadata | authMetadata | route | rpcRoute
+
+attrBlock ::= AT_ATTR LPAREN keyValue* RPAREN
+handlerMetadata ::= AT_HANDLER identifier
+docMetadata ::= AT_DOC LPAREN keyValue* RPAREN
+authMetadata ::= AT_AUTH
+route ::= (GET | HEAD | POST | PUT | DELETE | PATCH | CONNECT | OPTIONS | TRACE) routePath (LPAREN requestType? RPAREN)? (RETURNS LPAREN responseType? RPAREN)?
+rpcRoute ::= RPC identifier LPAREN requestType? RPAREN RETURNS LPAREN responseType? RPAREN
+
+routePath ::= (pathSegment)+
+private pathSegment ::= (SLASH | SLASH_COLON) pathToken (MINUS pathToken)*
+private pathToken ::= identifier | ID | NUMBER | STRING_LITERAL | keywords
+
+private keywords ::= SYNTAX | INFO | IMPORT | TYPE | ENUM | SERVICE | RETURNS | MAP | INTERFACE
+                   | STRING | BOOL | INT | INT32 | INT64 | FLOAT | FLOAT32 | FLOAT64 | DOUBLE
+                   | GET | HEAD | POST | PUT | DELETE | PATCH | CONNECT | OPTIONS | TRACE
+                   | AT_HANDLER | AT_DOC | AT_ATTR | AT_EXTERN_DEFS | AT_AUTH
+                   | STRUCT | RPC
+
+requestType ::= typeName
+responseType ::= typeName
+
+keyValue ::= identifier (COLON | ASSIGN) value (COMMA)?
+value ::= STRING_LITERAL | NUMBER

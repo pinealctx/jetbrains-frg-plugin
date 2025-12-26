@@ -1,0 +1,51 @@
+<idea-plugin>
+    <id>com.pinealctx.frg</id>
+    <name>FRG Language Support</name>
+    <vendor email="silkage@silkage.net" url="https://github.com/pinealctx">PinealCtx</vendor>
+
+    <description><![CDATA[
+    Support for FRG language.<br>
+    Features:
+    <ul>
+        <li>Syntax highlighting</li>
+        <li>Go to definition for Types and Enums</li>
+        <li>Go to definition for Handlers (jumps to Go implementation)</li>
+        <li>Structure view</li>
+    </ul>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType
+            name="FRG File"
+            implementationClass="com.pinealctx.frg.FrgFileType"
+            fieldName="INSTANCE"
+            language="FRG"
+            extensions="frg"/>
+        
+        <lang.parserDefinition
+            language="FRG"
+            implementationClass="com.pinealctx.frg.FrgParserDefinition"/>
+            
+        <lang.syntaxHighlighterFactory
+            language="FRG"
+            implementationClass="com.pinealctx.frg.FrgSyntaxHighlighterFactory"/>
+            
+        <annotator
+            language="FRG"
+            implementationClass="com.pinealctx.frg.FrgAnnotator"/>
+            
+        <lang.psiStructureViewFactory
+            language="FRG"
+            implementationClass="com.pinealctx.frg.FrgStructureViewFactory"/>
+            
+        <psi.referenceContributor
+            language="FRG"
+            implementation="com.pinealctx.frg.FrgReferenceContributor"/>
+            
+        <codeInsight.lineMarkerProvider
+            language="FRG"
+            implementationClass="com.pinealctx.frg.FrgLineMarkerProvider"/>
+    </extensions>
+</idea-plugin>
