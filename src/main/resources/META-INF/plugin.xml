@@ -39,5 +39,24 @@
             language="FRG"
             implementationClass="com.pinealctx.frg.FrgStructureViewFactory"/>
 
+        <lang.formatter
+            language="FRG"
+            implementationClass="com.pinealctx.frg.FrgFormattingModelBuilder"/>
+
+        <lang.commenter
+            language="FRG"
+            implementationClass="com.pinealctx.frg.FrgCommenter"/>
+
+        <lang.findUsagesProvider
+            language="FRG"
+            implementationClass="com.pinealctx.frg.FrgFindUsagesProvider"/>
+
     </extensions>
+
+    <actions>
+        <action id="Frg.NewFile" class="com.pinealctx.frg.actions.FrgCreateFileAction"
+                text="FRG File" description="Create new FRG file">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+        </action>
+    </actions>
 </idea-plugin>

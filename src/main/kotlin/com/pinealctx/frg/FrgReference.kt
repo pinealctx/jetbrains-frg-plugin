@@ -30,17 +30,22 @@ class FrgTypeReference(element: PsiElement, textRange: TextRange) :
         val project = myElement.project
         val types = FrgUtil.findTypeDeclarations(project, key)
         if (types.isNotEmpty()) {
-            return types[0].identifier
+            return types[0]
         }
         val enums = FrgUtil.findEnumDeclarations(project, key)
         if (enums.isNotEmpty()) {
-            return enums[0].identifier
+            return enums[0]
         }
         val externs = FrgUtil.findExternDefs(project, key)
         if (externs.isNotEmpty()) {
             return externs[0]
         }
         return null
+    }
+
+    override fun isReferenceTo(element: PsiElement): Boolean {
+        val resolved = resolve()
+        return element.manager.areElementsEquivalent(resolved, element)
     }
 
     override fun getVariants(): Array<Any> {
