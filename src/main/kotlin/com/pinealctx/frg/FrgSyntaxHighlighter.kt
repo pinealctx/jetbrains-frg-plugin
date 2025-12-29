@@ -29,7 +29,8 @@ class FrgSyntaxHighlighter : SyntaxHighlighterBase() {
         val STRING = TextAttributesKey.createTextAttributesKey("FRG_STRING", DefaultLanguageHighlighterColors.STRING)
         val NUMBER = TextAttributesKey.createTextAttributesKey("FRG_NUMBER", DefaultLanguageHighlighterColors.NUMBER)
         val COMMENT = TextAttributesKey.createTextAttributesKey("FRG_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
-        val TYPE = TextAttributesKey.createTextAttributesKey("FRG_TYPE", DefaultLanguageHighlighterColors.CLASS_NAME)
+        // Use KEYWORD color for types to match user expectations (blue instead of black)
+        val TYPE = TextAttributesKey.createTextAttributesKey("FRG_TYPE", DefaultLanguageHighlighterColors.KEYWORD)
         val METADATA = TextAttributesKey.createTextAttributesKey("FRG_METADATA", DefaultLanguageHighlighterColors.METADATA)
 
         private val KEYWORD_KEYS = arrayOf(KEYWORD)
