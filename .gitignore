@@ -19,7 +19,6 @@ gradle-app.setting
 idea-sandbox/
 
 # Generated Source Code
-src/main/gen/
 examples/gen/
 examples/bnf/gen/
 
