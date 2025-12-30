@@ -11,13 +11,10 @@ version = run {
         ref.removePrefix("v")
     } else {
         try {
-            val stdout = java.io.ByteArrayOutputStream()
-            exec {
+            val v = providers.exec {
                 commandLine("git", "describe", "--tags", "--abbrev=0")
-                standardOutput = stdout
                 isIgnoreExitValue = true
-            }
-            val v = stdout.toString().trim()
+            }.standardOutput.asText.get().trim()
             if (v.isNotEmpty()) v.removePrefix("v") else "UNKNOWN"
         } catch (e: Exception) {
             "UNKNOWN"
