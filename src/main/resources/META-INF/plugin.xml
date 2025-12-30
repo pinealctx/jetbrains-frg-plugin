@@ -47,6 +47,10 @@
             language="FRG"
             implementationClass="com.pinealctx.frg.FrgCommenter"/>
 
+        <lang.foldingBuilder
+            language="FRG"
+            implementationClass="com.pinealctx.frg.FrgFoldingBuilder"/>
+
         <lang.findUsagesProvider
             language="FRG"
             implementationClass="com.pinealctx.frg.FrgFindUsagesProvider"/>
