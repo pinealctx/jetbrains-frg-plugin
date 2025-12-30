@@ -5,7 +5,25 @@ plugins {
 }
 
 group = "com.pinealctx"
-version = "1.0-SNAPSHOT"
+version = run {
+    val ref = System.getenv("GITHUB_REF_NAME")
+    if (ref != null && ref.startsWith("v")) {
+        ref.removePrefix("v")
+    } else {
+        try {
+            val stdout = java.io.ByteArrayOutputStream()
+            exec {
+                commandLine("git", "describe", "--tags", "--abbrev=0")
+                standardOutput = stdout
+                isIgnoreExitValue = true
+            }
+            val v = stdout.toString().trim()
+            if (v.isNotEmpty()) v.removePrefix("v") else "UNKNOWN"
+        } catch (e: Exception) {
+            "UNKNOWN"
+        }
+    }
+}
 
 repositories {
     mavenCentral()
