@@ -55,38 +55,50 @@ class FrgBlock(
                 FrgTypes.PRIMITIVE_TYPE to typeAlignment
             )
         }
+        if (myNode.elementType == FrgTypes.ENUM_DECL) {
+            val assignAlignment = Alignment.createAlignment(true)
+            return mapOf(
+                FrgTypes.ASSIGN to assignAlignment
+            )
+        }
         return childAlignments
     }
 
 
     override fun getIndent(): Indent? {
-        val psi = myNode.psi
-        val parent = psi.parent
-        
-        // Top level elements should have no indent (force column 0)
-        if (parent is com.intellij.psi.PsiFile) {
-            return Indent.getAbsoluteNoneIndent()
-        }
-
         val elementType = myNode.elementType
         val parentType = myNode.treeParent?.elementType
 
-        if (parentType == FrgTypes.TYPE_DECL ||
-            parentType == FrgTypes.ENUM_DECL ||
-            parentType == FrgTypes.SERVICE_DECL ||
-            parentType == FrgTypes.INFO_BLOCK ||
-            parentType == FrgTypes.EXTERN_DEFS ||
-            parentType == FrgTypes.ATTR_BLOCK ||
-            parentType == FrgTypes.DOC_METADATA
+        if (elementType == FrgTypes.TYPE_FIELD ||
+            elementType == FrgTypes.ENUM_MEMBER ||
+            elementType == FrgTypes.SERVICE_BODY ||
+            elementType == FrgTypes.EXTERN_DEF
         ) {
-            if (elementType == FrgTypes.LBRACE || elementType == FrgTypes.RBRACE ||
-                elementType == FrgTypes.LPAREN || elementType == FrgTypes.RPAREN
-            ) {
-                return Indent.getNoneIndent()
-            }
             return Indent.getNormalIndent()
         }
-        
+
+        if (elementType == FrgTypes.KEY_VALUE) {
+            if (parentType == FrgTypes.INFO_BLOCK ||
+                parentType == FrgTypes.ATTR_BLOCK ||
+                parentType == FrgTypes.DOC_METADATA
+            ) {
+                return Indent.getNormalIndent()
+            }
+        }
+
+        if (elementType == FrgTypes.COMMENT) {
+            if (parentType == FrgTypes.TYPE_DECL ||
+                parentType == FrgTypes.ENUM_DECL ||
+                parentType == FrgTypes.SERVICE_DECL ||
+                parentType == FrgTypes.INFO_BLOCK ||
+                parentType == FrgTypes.EXTERN_DEFS ||
+                parentType == FrgTypes.ATTR_BLOCK ||
+                parentType == FrgTypes.DOC_METADATA
+            ) {
+                return Indent.getNormalIndent()
+            }
+        }
+
         return Indent.getNoneIndent()
     }
 

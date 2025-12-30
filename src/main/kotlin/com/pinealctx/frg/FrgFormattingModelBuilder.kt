@@ -32,12 +32,18 @@ class FrgFormattingModelBuilder : FormattingModelBuilder {
             .around(FrgTypes.ASSIGN).spaceIf(true)
             .after(FrgTypes.SYNTAX).spaceIf(true)
             .after(FrgTypes.IMPORT).spaceIf(true)
+            .before(FrgTypes.TYPE).spaceIf(false)
             .after(FrgTypes.TYPE).spaceIf(true)
+            .before(FrgTypes.ENUM).spaceIf(false)
             .after(FrgTypes.ENUM).spaceIf(true)
             .after(FrgTypes.SERVICE).spaceIf(true)
             .after(FrgTypes.STRUCT).spaceIf(true)
             .after(FrgTypes.RPC).spaceIf(true)
             .after(FrgTypes.RETURNS).spaceIf(true)
             .after(FrgTypes.MAP).spaceIf(false) // map[string]int
+            .between(FrgTypes.IDENTIFIER, FrgTypes.TYPE_NAME).spaces(1)
+            .between(FrgTypes.TYPE_NAME, FrgTypes.TAG).spaces(1)
+            .between(FrgTypes.ID, FrgTypes.ASSIGN).spaces(1)
+            .between(FrgTypes.ASSIGN, FrgTypes.VALUE).spaces(1)
     }
 }
