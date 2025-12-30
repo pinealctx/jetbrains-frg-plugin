@@ -24,7 +24,13 @@ class FrgBlock(
         while (child != null) {
             if (child.elementType !== TokenType.WHITE_SPACE) {
                 val childType = child.elementType
-                val alignmentForChild = alignmentMap?.get(childType)
+                var alignmentForChild = alignmentMap?.get(childType)
+
+                if (childType == FrgTypes.COMMENT && alignmentForChild != null) {
+                    if (!isEndOfLineComment(child)) {
+                        alignmentForChild = null
+                    }
+                }
                 
                 val block = FrgBlock(
                     child,
@@ -40,13 +46,23 @@ class FrgBlock(
         return blocks
     }
 
+    private fun isEndOfLineComment(node: ASTNode): Boolean {
+        val prev = node.treePrev ?: return false
+        if (prev.elementType == TokenType.WHITE_SPACE) {
+            return !prev.textContains('\n')
+        }
+        return true
+    }
+
     private fun createChildAlignmentMap(): Map<IElementType, Alignment>? {
         if (myNode.elementType == FrgTypes.TYPE_DECL) {
             val typeAlignment = Alignment.createAlignment(true)
             val tagAlignment = Alignment.createAlignment(true)
+            val commentAlignment = Alignment.createAlignment(true)
             return mapOf(
                 FrgTypes.TYPE_NAME to typeAlignment,
                 FrgTypes.TAG to tagAlignment,
+                FrgTypes.COMMENT to commentAlignment,
                 // For anonymous fields
                 FrgTypes.POINTER_TYPE to typeAlignment,
                 FrgTypes.QUALIFIED_NAME to typeAlignment,
@@ -57,8 +73,10 @@ class FrgBlock(
         }
         if (myNode.elementType == FrgTypes.ENUM_DECL) {
             val assignAlignment = Alignment.createAlignment(true)
+            val commentAlignment = Alignment.createAlignment(true)
             return mapOf(
-                FrgTypes.ASSIGN to assignAlignment
+                FrgTypes.ASSIGN to assignAlignment,
+                FrgTypes.COMMENT to commentAlignment
             )
         }
         return childAlignments
@@ -100,6 +118,19 @@ class FrgBlock(
         }
 
         return Indent.getNoneIndent()
+    }
+
+    override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
+        if (myNode.elementType == FrgTypes.TYPE_DECL ||
+            myNode.elementType == FrgTypes.ENUM_DECL ||
+            myNode.elementType == FrgTypes.SERVICE_DECL ||
+            myNode.elementType == FrgTypes.EXTERN_DEFS ||
+            myNode.elementType == FrgTypes.INFO_BLOCK ||
+            myNode.elementType == FrgTypes.ATTR_BLOCK ||
+            myNode.elementType == FrgTypes.DOC_METADATA) {
+            return ChildAttributes(Indent.getNormalIndent(), null)
+        }
+        return ChildAttributes(Indent.getNoneIndent(), null)
     }
 
     override fun getSpacing(child1: Block?, child2: Block): Spacing? {

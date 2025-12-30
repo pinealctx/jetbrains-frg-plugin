@@ -45,5 +45,6 @@ class FrgFormattingModelBuilder : FormattingModelBuilder {
             .between(FrgTypes.TYPE_NAME, FrgTypes.TAG).spaces(1)
             .between(FrgTypes.ID, FrgTypes.ASSIGN).spaces(1)
             .between(FrgTypes.ASSIGN, FrgTypes.VALUE).spaces(1)
+            .before(FrgTypes.COMMENT).spaces(1)
     }
 }
