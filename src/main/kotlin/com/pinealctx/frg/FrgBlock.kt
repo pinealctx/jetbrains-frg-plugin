@@ -190,6 +190,10 @@ class FrgBlock(
         }
 
         if (type2 == FrgTypes.COMMENT) {
+            // Allow SpacingBuilder to handle spacing after top-level declarations (to support blank lines)
+            if (type1 == FrgTypes.TYPE_DECL || type1 == FrgTypes.ENUM_DECL || type1 == FrgTypes.SERVICE_DECL || type1 == FrgTypes.SYNTAX_DECL) {
+                return spacingBuilder.getSpacing(this, child1, child2)
+            }
             return Spacing.createSpacing(1, 1, 0, true, 0)
         }
         return spacingBuilder.getSpacing(this, child1, child2)

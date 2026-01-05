@@ -23,6 +23,10 @@ class FrgFormattingModelBuilder : FormattingModelBuilder {
 
     private fun createSpaceBuilder(settings: CodeStyleSettings): SpacingBuilder {
         return SpacingBuilder(settings, FrgLanguage)
+            // Blank lines around top-level definitions
+            .between(FrgTypes.COMMENT, FrgTypes.TYPE_DECL).spacing(0, 0, 1, true, 0)
+            .around(FrgTypes.TYPE_DECL).blankLines(1)
+            .after(FrgTypes.SYNTAX_DECL).blankLines(1)
             .before(FrgTypes.LBRACE).spaceIf(true)
             .before(FrgTypes.LPAREN).spaceIf(false)
             .after(FrgTypes.COMMA).spaceIf(true)
