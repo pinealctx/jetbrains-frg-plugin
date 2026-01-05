@@ -13,10 +13,16 @@ public interface FrgTypeDecl extends FrgNamedElement {
   @NotNull
   List<FrgTypeField> getTypeFieldList();
 
-  @Nullable String getName();
+  //WARNING: getName(...) is skipped
+  //matching getName(FrgTypeDecl, ...)
+  //methods are not found in null
 
-  @NotNull PsiElement setName(@NotNull String name);
+  //WARNING: setName(...) is skipped
+  //matching setName(FrgTypeDecl, ...)
+  //methods are not found in null
 
-  @Nullable PsiElement getNameIdentifier();
+  //WARNING: getNameIdentifier(...) is skipped
+  //matching getNameIdentifier(FrgTypeDecl, ...)
+  //methods are not found in null
 
 }

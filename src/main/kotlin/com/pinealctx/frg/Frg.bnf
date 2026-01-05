@@ -10,26 +10,33 @@
   elementTypeHolderClass="com.pinealctx.frg.psi.FrgTypes"
   elementTypeClass="com.pinealctx.frg.psi.FrgElementType"
   tokenTypeClass="com.pinealctx.frg.psi.FrgTokenType"
+
+  tokens = [
+    NEWLINE="regexp:\R"
+    COMMENT="regexp://.*|/\*[\s\S]*?\*/"
+  ]
 }
 
-frgFile ::= item_*
+frgFile ::= (item_ | NEWLINE)*
 
-private item_ ::= (syntaxDecl | infoBlock | importDecl | externDefs | typeDecl | enumDecl | serviceDecl | COMMENT)
+private item_ ::= (syntaxDecl | infoBlock | importDecl | externDefs | typeDecl | enumDecl | serviceDecl)
 
 syntaxDecl ::= SYNTAX (ASSIGN)? STRING_LITERAL
-infoBlock ::= INFO LPAREN (keyValue)* RPAREN
+infoBlock ::= INFO LPAREN (keyValue | NEWLINE)* RPAREN
 importDecl ::= IMPORT STRING_LITERAL
 
-externDefs ::= AT_EXTERN_DEFS LBRACE externDef* RBRACE
+externDefs ::= AT_EXTERN_DEFS LBRACE (externDef | NEWLINE)* RBRACE
 externDef ::= keyValue+
 
 identifier ::= ID
 
-typeDecl ::= TYPE identifier (STRUCT)? LBRACE typeField* RBRACE {
+typeDecl ::= TYPE identifier (STRUCT)? LBRACE typeBody RBRACE {
     mixin="com.pinealctx.frg.psi.impl.FrgNamedElementImpl"
     implements="com.pinealctx.frg.psi.FrgNamedElement"
     methods=[getName setName getNameIdentifier]
 }
+
+private typeBody ::= (typeField | NEWLINE)*
 
 typeField ::= normalField | anonymousField
 normalField ::= identifier typeName (tag)? {pin=2}
@@ -46,7 +53,7 @@ primitiveType ::= STRING | BOOL | INT | INT32 | INT64 | FLOAT | FLOAT32 | FLOAT6
 
 tag ::= STRING_LITERAL
 
-enumDecl ::= ENUM identifier LBRACE enumMember* RBRACE {
+enumDecl ::= ENUM identifier LBRACE (enumMember | NEWLINE)* RBRACE {
     mixin="com.pinealctx.frg.psi.impl.FrgNamedElementImpl"
     implements="com.pinealctx.frg.psi.FrgNamedElement"
     methods=[getName setName getNameIdentifier]
@@ -54,12 +61,12 @@ enumDecl ::= ENUM identifier LBRACE enumMember* RBRACE {
 
 enumMember ::= ID (ASSIGN value)? (SEMI)?
 
-serviceDecl ::= (attrBlock)? SERVICE ID? LBRACE serviceBody* RBRACE
-serviceBody ::= handlerMetadata | docMetadata | authMetadata | route | rpcRoute
+serviceDecl ::= (attrBlock)? NEWLINE* SERVICE ID? LBRACE (serviceBody | NEWLINE)* RBRACE
+private serviceBody ::= handlerMetadata | docMetadata | authMetadata | route | rpcRoute
 
-attrBlock ::= AT_ATTR LPAREN keyValue* RPAREN
+attrBlock ::= AT_ATTR LPAREN (keyValue | NEWLINE)* RPAREN
 handlerMetadata ::= AT_HANDLER identifier
-docMetadata ::= AT_DOC LPAREN keyValue* RPAREN
+docMetadata ::= AT_DOC LPAREN (keyValue | NEWLINE)* RPAREN
 authMetadata ::= AT_AUTH
 route ::= (GET | HEAD | POST | PUT | DELETE | PATCH | CONNECT | OPTIONS | TRACE) routePath (LPAREN requestType? RPAREN)? (RETURNS LPAREN responseType? RPAREN)?
 rpcRoute ::= RPC identifier LPAREN requestType? RPAREN RETURNS LPAREN responseType? RPAREN

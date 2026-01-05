@@ -103,10 +103,6 @@ public class FrgVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitServiceBody(@NotNull FrgServiceBody o) {
-    visitPsiElement(o);
-  }
-
   public void visitServiceDecl(@NotNull FrgServiceDecl o) {
     visitPsiElement(o);
   }

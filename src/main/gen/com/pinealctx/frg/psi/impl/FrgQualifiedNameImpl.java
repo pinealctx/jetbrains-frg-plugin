@@ -12,7 +12,7 @@ import com.pinealctx.frg.psi.*;
 
 public class FrgQualifiedNameImpl extends FrgQualifiedNameMixin implements FrgQualifiedName {
 
-  public FrgQualifiedNameImpl(@NotNull ASTNode node) {
+  public FrgQualifiedNameImpl(ASTNode node) {
     super(node);
   }
 

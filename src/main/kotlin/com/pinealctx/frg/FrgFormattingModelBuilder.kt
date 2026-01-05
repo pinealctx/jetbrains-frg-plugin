@@ -24,8 +24,6 @@ class FrgFormattingModelBuilder : FormattingModelBuilder {
     private fun createSpaceBuilder(settings: CodeStyleSettings): SpacingBuilder {
         return SpacingBuilder(settings, FrgLanguage)
             .before(FrgTypes.LBRACE).spaceIf(true)
-            .after(FrgTypes.LBRACE).lineBreakInCode()
-            .before(FrgTypes.RBRACE).lineBreakInCode()
             .before(FrgTypes.LPAREN).spaceIf(false)
             .after(FrgTypes.COMMA).spaceIf(true)
             .before(FrgTypes.COMMA).spaceIf(false)
@@ -41,10 +39,21 @@ class FrgFormattingModelBuilder : FormattingModelBuilder {
             .after(FrgTypes.RPC).spaceIf(true)
             .after(FrgTypes.RETURNS).spaceIf(true)
             .after(FrgTypes.MAP).spaceIf(false) // map[string]int
-            .between(FrgTypes.IDENTIFIER, FrgTypes.TYPE_NAME).spaces(1)
-            .between(FrgTypes.TYPE_NAME, FrgTypes.TAG).spaces(1)
             .between(FrgTypes.ID, FrgTypes.ASSIGN).spaces(1)
             .between(FrgTypes.ASSIGN, FrgTypes.VALUE).spaces(1)
             .before(FrgTypes.COMMENT).spaces(1)
+            // Keep comments attached to the following metadata (Must be before generic .before rules)
+            .between(FrgTypes.COMMENT, FrgTypes.HANDLER_METADATA).spacing(0, 0, 1, true, 0)
+            .between(FrgTypes.COMMENT, FrgTypes.DOC_METADATA).spacing(0, 0, 1, true, 0)
+            .between(FrgTypes.COMMENT, FrgTypes.AUTH_METADATA).spacing(0, 0, 1, true, 0)
+            // Enforce blank lines between interface definitions
+            .before(FrgTypes.HANDLER_METADATA).blankLines(1)
+            .before(FrgTypes.DOC_METADATA).blankLines(1)
+            .before(FrgTypes.AUTH_METADATA).blankLines(1)
+            // Ensure blank lines between routes if no metadata is present
+            .between(FrgTypes.ROUTE, FrgTypes.ROUTE).blankLines(1)
+            .between(FrgTypes.ROUTE, FrgTypes.RPC_ROUTE).blankLines(1)
+            .between(FrgTypes.RPC_ROUTE, FrgTypes.ROUTE).blankLines(1)
+            .between(FrgTypes.RPC_ROUTE, FrgTypes.RPC_ROUTE).blankLines(1)
     }
 }

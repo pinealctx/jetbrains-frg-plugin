@@ -80,12 +80,9 @@ class FrgStructureViewElement(private val element: NavigatablePsiElement) : Stru
             return treeElements.toTypedArray()
         } else if (element is FrgServiceDecl) {
             val treeElements = ArrayList<TreeElement>()
-            val serviceBodies = element.serviceBodyList
-            for (body in serviceBodies) {
-                val handlerMetadata = body.handlerMetadata
-                if (handlerMetadata != null) {
-                    treeElements.add(FrgStructureViewElement(handlerMetadata as NavigatablePsiElement))
-                }
+            val handlers = element.handlerMetadataList
+            for (handler in handlers) {
+                treeElements.add(FrgStructureViewElement(handler as NavigatablePsiElement))
             }
             return treeElements.toTypedArray()
         } else if (element is FrgTypeDecl) {

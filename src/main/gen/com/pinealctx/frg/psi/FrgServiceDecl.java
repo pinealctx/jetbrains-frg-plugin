@@ -11,6 +11,18 @@ public interface FrgServiceDecl extends PsiElement {
   FrgAttrBlock getAttrBlock();
 
   @NotNull
-  List<FrgServiceBody> getServiceBodyList();
+  List<FrgAuthMetadata> getAuthMetadataList();
+
+  @NotNull
+  List<FrgDocMetadata> getDocMetadataList();
+
+  @NotNull
+  List<FrgHandlerMetadata> getHandlerMetadataList();
+
+  @NotNull
+  List<FrgRoute> getRouteList();
+
+  @NotNull
+  List<FrgRpcRoute> getRpcRouteList();
 
 }

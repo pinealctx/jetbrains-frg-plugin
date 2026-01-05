@@ -32,7 +32,6 @@ public interface FrgTypes {
   IElementType ROUTE = new FrgElementType("ROUTE");
   IElementType ROUTE_PATH = new FrgElementType("ROUTE_PATH");
   IElementType RPC_ROUTE = new FrgElementType("RPC_ROUTE");
-  IElementType SERVICE_BODY = new FrgElementType("SERVICE_BODY");
   IElementType SERVICE_DECL = new FrgElementType("SERVICE_DECL");
   IElementType SYNTAX_DECL = new FrgElementType("SYNTAX_DECL");
   IElementType TAG = new FrgElementType("TAG");
@@ -73,6 +72,7 @@ public interface FrgTypes {
   IElementType LPAREN = new FrgTokenType("LPAREN");
   IElementType MAP = new FrgTokenType("MAP");
   IElementType MINUS = new FrgTokenType("MINUS");
+  IElementType NEWLINE = new FrgTokenType("NEWLINE");
   IElementType NUMBER = new FrgTokenType("NUMBER");
   IElementType OPTIONS = new FrgTokenType("OPTIONS");
   IElementType PATCH = new FrgTokenType("PATCH");
@@ -169,9 +169,6 @@ public interface FrgTypes {
       }
       else if (type == RPC_ROUTE) {
         return new FrgRpcRouteImpl(node);
-      }
-      else if (type == SERVICE_BODY) {
-        return new FrgServiceBodyImpl(node);
       }
       else if (type == SERVICE_DECL) {
         return new FrgServiceDeclImpl(node);

@@ -12,7 +12,7 @@ import com.pinealctx.frg.psi.*;
 
 public class FrgEnumDeclImpl extends FrgNamedElementImpl implements FrgEnumDecl {
 
-  public FrgEnumDeclImpl(@NotNull ASTNode node) {
+  public FrgEnumDeclImpl(ASTNode node) {
     super(node);
   }
 

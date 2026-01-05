@@ -13,10 +13,16 @@ public interface FrgEnumDecl extends FrgNamedElement {
   @NotNull
   FrgIdentifier getIdentifier();
 
-  @Nullable String getName();
+  //WARNING: getName(...) is skipped
+  //matching getName(FrgEnumDecl, ...)
+  //methods are not found in null
 
-  @NotNull PsiElement setName(@NotNull String name);
+  //WARNING: setName(...) is skipped
+  //matching setName(FrgEnumDecl, ...)
+  //methods are not found in null
 
-  @Nullable PsiElement getNameIdentifier();
+  //WARNING: getNameIdentifier(...) is skipped
+  //matching getNameIdentifier(FrgEnumDecl, ...)
+  //methods are not found in null
 
 }

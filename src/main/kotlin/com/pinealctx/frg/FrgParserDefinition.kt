@@ -20,6 +20,7 @@ class FrgParserDefinition : ParserDefinition {
     override fun createParser(project: Project): PsiParser = FrgParser()
     override fun getFileNodeType(): IFileElementType = FILE
     override fun getCommentTokens(): TokenSet = COMMENTS
+    override fun getWhitespaceTokens(): TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
     override fun getStringLiteralElements(): TokenSet = TokenSet.EMPTY
     override fun createElement(node: ASTNode): PsiElement = FrgTypes.Factory.createElement(node)
     override fun createFile(viewProvider: FileViewProvider): PsiFile = FrgFile(viewProvider)

@@ -16,7 +16,7 @@ import com.intellij.psi.TokenType;
 %eof}
 
 CRLF=\R
-WHITE_SPACE=[\ \n\t\f]
+WHITE_SPACE=[\ \t\f]
 FIRST_VALUE_CHARACTER=[^ \n\f\\] | "\\"{CRLF} | "\\".
 VALUE_CHARACTER=[^\n\f\\] | "\\"{CRLF} | "\\".
 END_OF_LINE_COMMENT=("//")[^\r\n]*
@@ -31,6 +31,7 @@ STRING_LITERAL=\"([^\\\"]|\\.)*\"|\`([^`])*\`
 <YYINITIAL> {
   {END_OF_LINE_COMMENT}      { return FrgTypes.COMMENT; }
   {BLOCK_COMMENT}            { return FrgTypes.COMMENT; }
+  {CRLF}                     { return FrgTypes.NEWLINE; }
 
   "syntax"                   { return FrgTypes.SYNTAX; }
   "info"                     { return FrgTypes.INFO; }

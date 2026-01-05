@@ -22,7 +22,7 @@ class FrgBlock(
         
         var child = myNode.firstChildNode
         while (child != null) {
-            if (child.elementType !== TokenType.WHITE_SPACE) {
+            if (child.elementType !== TokenType.WHITE_SPACE && child.elementType !== FrgTypes.NEWLINE) {
                 val childType = child.elementType
                 var alignmentForChild = alignmentMap?.get(childType)
 
@@ -30,6 +30,12 @@ class FrgBlock(
                     if (!isEndOfLineComment(child)) {
                         alignmentForChild = null
                     }
+                }
+
+                // Disable alignment for anonymous fields (e.g. "User" in "type UserDetail { User ... }")
+                // We only want to align types in NormalFields (e.g. "*Org" in "Org *Org")
+                if (myNode.elementType == FrgTypes.ANONYMOUS_FIELD) {
+                    alignmentForChild = null
                 }
                 
                 val block = FrgBlock(
@@ -47,10 +53,13 @@ class FrgBlock(
     }
 
     private fun isEndOfLineComment(node: ASTNode): Boolean {
-        val prev = node.treePrev ?: return false
-        if (prev.elementType == TokenType.WHITE_SPACE) {
-            return !prev.textContains('\n')
+        var prev = node.treePrev
+        while (prev != null && prev.elementType == TokenType.WHITE_SPACE) {
+            if (prev.textContains('\n')) return false
+            prev = prev.treePrev
         }
+        if (prev == null) return false
+        if (prev.elementType == FrgTypes.NEWLINE) return false
         return true
     }
 
@@ -63,12 +72,25 @@ class FrgBlock(
                 FrgTypes.TYPE_NAME to typeAlignment,
                 FrgTypes.TAG to tagAlignment,
                 FrgTypes.COMMENT to commentAlignment,
-                // For anonymous fields
+                // For cases where typeName might be transparent or we want to align specific types
                 FrgTypes.POINTER_TYPE to typeAlignment,
                 FrgTypes.QUALIFIED_NAME to typeAlignment,
                 FrgTypes.MAP_TYPE to typeAlignment,
                 FrgTypes.ARRAY_TYPE to typeAlignment,
-                FrgTypes.PRIMITIVE_TYPE to typeAlignment
+                FrgTypes.PRIMITIVE_TYPE to typeAlignment,
+                // Add primitive type tokens directly in case the rule is collapsed
+                FrgTypes.STRING to typeAlignment,
+                FrgTypes.BOOL to typeAlignment,
+                FrgTypes.INT to typeAlignment,
+                FrgTypes.INT32 to typeAlignment,
+                FrgTypes.INT64 to typeAlignment,
+                FrgTypes.FLOAT to typeAlignment,
+                FrgTypes.FLOAT32 to typeAlignment,
+                FrgTypes.FLOAT64 to typeAlignment,
+                FrgTypes.DOUBLE to typeAlignment,
+                FrgTypes.INTERFACE to typeAlignment,
+                // Add STRING_LITERAL for tags in case the tag rule is collapsed
+                FrgTypes.STRING_LITERAL to tagAlignment
             )
         }
         if (myNode.elementType == FrgTypes.ENUM_DECL) {
@@ -89,9 +111,26 @@ class FrgBlock(
 
         if (elementType == FrgTypes.TYPE_FIELD ||
             elementType == FrgTypes.ENUM_MEMBER ||
-            elementType == FrgTypes.SERVICE_BODY ||
             elementType == FrgTypes.EXTERN_DEF
         ) {
+            return Indent.getNormalIndent()
+        }
+
+        // Fallback for when wrapper nodes are transparent/collapsed
+        if (parentType == FrgTypes.TYPE_DECL && (
+            elementType == FrgTypes.NORMAL_FIELD || 
+            elementType == FrgTypes.ANONYMOUS_FIELD
+        )) {
+            return Indent.getNormalIndent()
+        }
+
+        if (parentType == FrgTypes.SERVICE_DECL && (
+            elementType == FrgTypes.HANDLER_METADATA ||
+            elementType == FrgTypes.DOC_METADATA ||
+            elementType == FrgTypes.AUTH_METADATA ||
+            elementType == FrgTypes.ROUTE ||
+            elementType == FrgTypes.RPC_ROUTE
+        )) {
             return Indent.getNormalIndent()
         }
 
@@ -134,6 +173,25 @@ class FrgBlock(
     }
 
     override fun getSpacing(child1: Block?, child2: Block): Spacing? {
+        if (myNode.elementType == FrgTypes.NORMAL_FIELD ||
+            myNode.elementType == FrgTypes.ANONYMOUS_FIELD) {
+            return Spacing.createSpacing(1, 1, 0, false, 0)
+        }
+
+        val type1 = (child1 as? AbstractBlock)?.node?.elementType
+        val type2 = (child2 as? AbstractBlock)?.node?.elementType
+
+        // Enforce blank line between Route and next Comment (if not trailing)
+        if ((type1 == FrgTypes.ROUTE || type1 == FrgTypes.RPC_ROUTE) && type2 == FrgTypes.COMMENT) {
+            val node2 = (child2 as? AbstractBlock)?.node
+            if (node2 != null && !isEndOfLineComment(node2)) {
+                return Spacing.createSpacing(0, 0, 2, true, 0)
+            }
+        }
+
+        if (type2 == FrgTypes.COMMENT) {
+            return Spacing.createSpacing(1, 1, 0, true, 0)
+        }
         return spacingBuilder.getSpacing(this, child1, child2)
     }
 

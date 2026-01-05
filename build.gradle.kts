@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.9.20"
     id("org.jetbrains.intellij") version "1.17.2"
+    id("org.jetbrains.grammarkit") version "2023.3.0.1"
 }
 
 group = "com.pinealctx"
@@ -40,14 +41,34 @@ intellij {
     plugins.set(listOf("com.intellij.java"))
 }
 
+grammarKit {
+    jflexRelease.set("1.9.1")
+    grammarKitRelease.set("2023.3")
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks {
+    generateLexer {
+        sourceFile.set(file("src/main/kotlin/com/pinealctx/frg/Frg.flex"))
+        targetOutputDir.set(file("src/main/gen/com/pinealctx/frg"))
+        purgeOldFiles.set(true)
+    }
+
+    generateParser {
+        sourceFile.set(file("src/main/kotlin/com/pinealctx/frg/Frg.bnf"))
+        targetRootOutputDir.set(file("src/main/gen"))
+        pathToParser.set("/com/pinealctx/frg/parser/FrgParser.java")
+        pathToPsiRoot.set("/com/pinealctx/frg/psi")
+        purgeOldFiles.set(true)
+    }
+
     // Set the JVM compatibility versions
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        dependsOn("generateLexer", "generateParser")
         kotlinOptions.jvmTarget = "17"
     }
 

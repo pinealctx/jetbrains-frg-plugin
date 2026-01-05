@@ -35,8 +35,32 @@ public class FrgServiceDeclImpl extends ASTWrapperPsiElement implements FrgServi
 
   @Override
   @NotNull
-  public List<FrgServiceBody> getServiceBodyList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, FrgServiceBody.class);
+  public List<FrgAuthMetadata> getAuthMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, FrgAuthMetadata.class);
+  }
+
+  @Override
+  @NotNull
+  public List<FrgDocMetadata> getDocMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, FrgDocMetadata.class);
+  }
+
+  @Override
+  @NotNull
+  public List<FrgHandlerMetadata> getHandlerMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, FrgHandlerMetadata.class);
+  }
+
+  @Override
+  @NotNull
+  public List<FrgRoute> getRouteList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, FrgRoute.class);
+  }
+
+  @Override
+  @NotNull
+  public List<FrgRpcRoute> getRpcRouteList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, FrgRpcRoute.class);
   }
 
 }
